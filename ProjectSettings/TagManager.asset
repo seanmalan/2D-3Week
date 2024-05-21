@@ -16,6 +16,7 @@ TagManager:
   - brokenFenceLeft
   - brokenFenceRight
   - fixedFence
+  - Audio
   layers:
   - Default
   - TransparentFX
