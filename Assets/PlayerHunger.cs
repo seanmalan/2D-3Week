@@ -38,10 +38,7 @@ public class PlayerHunger : MonoBehaviour
     {
         
         // Increase hunger by 25 when eating good food
-        Debug.Log("Eating good food");
-        Debug.Log("Hunger before eating: " + currentHunger);
         currentHunger += 25f;
-        Debug.Log("Hunger after eating: " + currentHunger);
         currentHunger = Mathf.Clamp(currentHunger, 0f, maxHunger); // Clamp hunger within 0 to maxHunger
     }
 
