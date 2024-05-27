@@ -46,87 +46,85 @@ public class BabyCowController : MonoBehaviour
             return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+        float distanceToMamaCow = Vector2.Distance(transform.position, mamaCowTransform.position);
 
         // Check if the player is within follow distance
-        if (distanceToPlayer <= followDistance)
+        if (distanceToPlayer <= followDistance && distanceToMamaCow > 3f)
         {
             isFollowing = true;
 
             // Move towards the player at the specified speed
             transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
-
-            // Check if near mama cow to stop following
-            float distanceToMamaCow = Vector2.Distance(transform.position, mamaCowTransform.position);
-
-
-            if (distanceToMamaCow <= stopDistance)
-            {
-                isFollowing = false;
-                transform.position = Vector2.MoveTowards(transform.position, mamaCowTransform.position, moveSpeed * Time.deltaTime);
-                // Optionally, perform any actions when near the mama cow (e.g., stop animations, trigger events)
-            }
         }
         else
         {
             isFollowing = false;
 
-            // Perform movement based on current state
-            switch (currentMovementState)
+            if (distanceToMamaCow <= stopDistance)
             {
-                case MovementState.Idle:
-                    // Start moving right
-                    currentMovementState = MovementState.MovingRight;
-                    moveTimer = moveDistance / moveSpeed; // Calculate time to reach moveDistance
-                    break;
+                // Move towards the mama cow if not already close enough
+                transform.position = Vector2.MoveTowards(transform.position, mamaCowTransform.position, moveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                // Perform movement based on current state when not following
+                switch (currentMovementState)
+                {
+                    case MovementState.Idle:
+                        // Start moving right
+                        currentMovementState = MovementState.MovingRight;
+                        moveTimer = moveDistance / moveSpeed; // Calculate time to reach moveDistance
+                        break;
 
-                case MovementState.MovingRight:
-                    // Move right
-                    transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-                    moveTimer -= Time.deltaTime;
+                    case MovementState.MovingRight:
+                        // Move right
+                        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+                        moveTimer -= Time.deltaTime;
 
-                    // Check if reached move distance
-                    if (moveTimer <= 0f)
-                    {
-                        // Pause after moving right
-                        currentMovementState = MovementState.Pause;
-                        moveTimer = pauseDuration;
-                    }
-                    break;
-
-                case MovementState.Pause:
-                    // Pause before choosing direction
-                    moveTimer -= Time.deltaTime;
-
-                    // Check if pause duration is over
-                    if (moveTimer <= 0f)
-                    {
-                        // Randomly choose to move left or right
-                        if (Random.Range(0f, 1f) < 0.5f)
+                        // Check if reached move distance
+                        if (moveTimer <= 0f)
                         {
-                            currentMovementState = MovementState.MovingLeft;
+                            // Pause after moving right
+                            currentMovementState = MovementState.Pause;
+                            moveTimer = pauseDuration;
                         }
-                        else
+                        break;
+
+                    case MovementState.Pause:
+                        // Pause before choosing direction
+                        moveTimer -= Time.deltaTime;
+
+                        // Check if pause duration is over
+                        if (moveTimer <= 0f)
                         {
-                            currentMovementState = MovementState.MovingRight;
+                            // Randomly choose to move left or right
+                            if (Random.Range(0f, 1f) < 0.5f)
+                            {
+                                currentMovementState = MovementState.MovingLeft;
+                            }
+                            else
+                            {
+                                currentMovementState = MovementState.MovingRight;
+                            }
+                            // Reset moveTimer for new movement phase
+                            moveTimer = moveDistance / moveSpeed;
                         }
-                        // Reset moveTimer for new movement phase
-                        moveTimer = moveDistance / moveSpeed;
-                    }
-                    break;
+                        break;
 
-                case MovementState.MovingLeft:
-                    // Move left
-                    transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
-                    moveTimer -= Time.deltaTime;
+                    case MovementState.MovingLeft:
+                        // Move left
+                        transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
+                        moveTimer -= Time.deltaTime;
 
-                    // Check if reached move distance
-                    if (moveTimer <= 0f)
-                    {
-                        // Pause after moving left
-                        currentMovementState = MovementState.Pause;
-                        moveTimer = pauseDuration;
-                    }
-                    break;
+                        // Check if reached move distance
+                        if (moveTimer <= 0f)
+                        {
+                            // Pause after moving left
+                            currentMovementState = MovementState.Pause;
+                            moveTimer = pauseDuration;
+                        }
+                        break;
+                }
             }
         }
     }
