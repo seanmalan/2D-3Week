@@ -19,19 +19,24 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+    // this controls the player movements.
     private void OnMovement(InputValue value)
     {
         movement = value.Get<Vector2>();
 
-        if(movement.x != 0 || movement.y != 0)
+
+        // this controls the nimation as well so that when the player is moving the animation is playing the movement animation and when there is no inputs the player will stay still and play the idle animation.   
+        if (movement.x != 0 || movement.y != 0)
         {
            
         animator.SetFloat("Horizontal", movement.x);
         animator.SetFloat("Vertical", movement.y);
 
+            // walking animations.
             animator.SetBool("IsWalking", true);
         } else
         {
+            // idle animations
             animator.SetBool("IsWalking", false);
         }
     }
